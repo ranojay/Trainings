@@ -1,0 +1,10 @@
+varying vec3 normal;
+varying vec4 pos;
+void main()
+{
+ normal = normalize(gl_NormalMatrix * gl_Normal);
+ gl_Position = ftransform();
+ pos = gl_Position;
+ gl_FrontColor =  pos.x < 1.0 ? vec4(0,1,0,0) : vec4(0,0,1,0);
+}
+

@@ -1,0 +1,44 @@
+varying vec4 vertexpos;
+
+void main(void)
+{
+    vec3 normal;
+
+    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+
+    vertexpos = gl_Vertex;
+    gl_Position = ftransform();
+    normal = gl_Normal;
+
+    vec3 fragNormal = normalize(gl_NormalMatrix * normal);
+
+    vec4 diffuse = vec4(0.0,0.0,0.0,0.0);
+    vec4 ambient = vec4(0.0,0.0,0.0,0.0);
+    vec4 specular = vec4(0.0,0.0,0.0,0.0);
+    vec4 specularlight = vec4(0.2,0.2,0.2,1.0);
+
+
+    for ( int light=0; light<1; light++ )
+    {
+        vec3 lightDir = normalize( vec3(gl_LightSource[light].position) );
+        float NdotL = abs( dot(fragNormal, lightDir) );
+
+        diffuse += gl_LightSource[light].diffuse * NdotL;
+        ambient += gl_LightSource[light].ambient;
+        float pf = 0.0;
+        if (NdotL != 0.0)
+        {
+            float NdotH = abs( 
+	          dot(fragNormal, vec3(gl_LightSource[light].halfVector)) );
+            if ( NdotH!=0.0 || gl_FrontMaterial.shininess!=0.0 )
+                pf = pow( NdotH, gl_FrontMaterial.shininess );
+        }
+        specular += gl_LightSource[light].specular * pf;
+    }
+
+    gl_FrontColor =
+        gl_FrontLightModelProduct.sceneColor +
+        ambient  * gl_FrontMaterial.ambient +
+        diffuse  * gl_FrontMaterial.diffuse +
+        specular * gl_FrontMaterial.specular;
+}
