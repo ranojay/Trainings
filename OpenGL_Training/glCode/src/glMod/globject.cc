@@ -950,10 +950,11 @@ void  GLObject::drawRealisticEarth(float rad, float u, float v, float w)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
+	glEnable(GL_MULTISAMPLE);
+	glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+
 	drawSimpleEarth(rad, u, v, w);
 	drawAtmosphere(rad + 0.15, u, v, w);
-
-	glFlush();
 }
 
 void  GLObject::drawEarth( float rad, float u, float v, float w )

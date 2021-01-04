@@ -257,7 +257,7 @@ void glutWin::init( int argc, char** argv )
 {
    glutInitWindowSize( 640, 480 );
    glutInit( &argc, argv );
-   glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
+   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
    glutCreateWindow( argv[0] );
    initGL();
    dumpGLInfo();
