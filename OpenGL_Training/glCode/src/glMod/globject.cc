@@ -955,6 +955,8 @@ void  GLObject::drawRealisticEarth(float rad, float u, float v, float w)
 
 	drawSimpleEarth(rad, u, v, w);
 	drawAtmosphere(rad + 0.15, u, v, w);
+
+	glFlush();
 }
 
 void  GLObject::drawEarth( float rad, float u, float v, float w )
@@ -1120,8 +1122,8 @@ void GLObject::drawLayers( float x,float z, float y,float u,float v, float w, bo
     glPushMatrix();
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    int i,j;
-    float vec[3][3],xf,yf,zf,step=1,f=0.1,F=0.5,*q,k=0,l=0,tmp;
+    int i, j;
+    float vec[3][3],xf,yf,zf,step=1,f=0.1,FF=0.5,*q,k=0,l=0,tmp;
     float normal[3];
     static float **p;
 
@@ -1132,7 +1134,6 @@ void GLObject::drawLayers( float x,float z, float y,float u,float v, float w, bo
     }
 
 
-    l=0;
     for ( i=0; i<=2*x; i++ )
     {
 	k=0;
@@ -1594,7 +1595,7 @@ void GLObject::loadModel( const char* fnm )
     int i = 0, j = 0, k = 0, l = 0;
     char ch = 0;
 	
-    FILE *fp = fopen( mModelDir("foot.obj"), "rt" );
+    FILE *fp = fopen( fnm, "rt" );
 
     while ( !feof(fp) )
     {
@@ -1689,7 +1690,7 @@ void GLObject::computeVertexNormals()
 void GLObject::drawModel()
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    loadModel( "foot.obj" );
+    loadModel(mModelDir("foot.obj"));
     //glPolygonMode ( GL_FRONT_AND_BACK, GL_LINE);
     glEnable( GL_LIGHTING );
     for ( int idx=0; idx<12612-3; idx+=3 )
@@ -1708,7 +1709,7 @@ void GLObject::drawModel()
 void GLObject::drawModelVA()
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    loadModel( "foot.obj" );
+    loadModel(mModelDir("foot.obj"));
     glEnable( GL_LIGHTING );
     
     glEnableClientState( GL_VERTEX_ARRAY );
@@ -1719,6 +1720,188 @@ void GLObject::drawModelVA()
 
     glDisable( GL_LIGHTING );
     glFlush();
+}
+
+void GLObject::calccolor(float height, float c[3])
+{
+    float color[10][3] = {
+     {1.0,0.5,0.0},
+     {1.0,0.5,0.0},
+     {1.0,1.0,0.0},
+     {1.0,1.0,0.0},
+	 {0.0,1.0,0.0},
+	 {0.0,0.85,0.2},
+	 {0.0,0.8,0.8},
+	 {0.0,0.5,0.9},
+	 {0.0,0.3,1.0},
+	 {0.0,0.2,0.8},
+    };
+    float fact;
+
+    height = height / 100;//*(1.0/255.0);
+
+    if (height >= 1.0) {
+	c[0] = 1; c[1] = 0; c[2] = 0;
+	return;
+    }
+    if ((height < 1.0) && (height >= 0.9)) {
+	fact = (height - 0.9) * 10.0;
+	fact = (height - 0.7) * 5.0;
+	c[0] = fact * color[0][0] + (1.0 - fact) * color[1][0];
+	c[1] = fact * color[0][1] + (1.0 - fact) * color[1][1];
+	c[2] = fact * color[0][2] + (1.0 - fact) * color[1][2];
+	return;
+    }
+    if ((height < 0.9) && (height >= 0.8)) {
+	fact = (height - 0.8) * 5.0;
+	c[0] = fact * color[1][0] + (1.0 - fact) * color[2][0];
+	c[1] = fact * color[1][1] + (1.0 - fact) * color[2][1];
+	c[2] = fact * color[1][2] + (1.0 - fact) * color[2][2];
+	return;
+    }
+
+    if ((height < 0.8) && (height >= 0.7)) {
+	fact = (height - 0.7) * 10.0;
+	c[0] = fact * color[2][0] + (1.0 - fact) * color[3][0];
+	c[1] = fact * color[2][1] + (1.0 - fact) * color[3][1];
+	c[2] = fact * color[2][2] + (1.0 - fact) * color[3][2];
+	return;
+    }
+
+    if ((height < 0.7) && (height >= 0.6)) {
+	fact = (height - 0.6) * 10.0;
+	c[0] = fact * color[3][0] + (1.0 - fact) * color[4][0];
+	c[1] = fact * color[3][1] + (1.0 - fact) * color[4][1];
+	c[2] = fact * color[3][2] + (1.0 - fact) * color[4][2];
+	return;
+    }
+
+    if ((height < 0.6) && (height >= 0.5)) {
+	fact = (height - 0.5) * 10.0;
+	c[0] = fact * color[4][0] + (1.0 - fact) * color[5][0];
+	c[1] = fact * color[4][1] + (1.0 - fact) * color[5][1];
+	c[2] = fact * color[4][2] + (1.0 - fact) * color[5][2];
+	return;
+    }
+    if ((height < 0.5) && (height >= 0.4)) {
+	fact = (height - 0.4) * 10.0;
+	c[0] = fact * color[5][0] + (1.0 - fact) * color[6][0];
+	c[1] = fact * color[5][1] + (1.0 - fact) * color[6][1];
+	c[2] = fact * color[5][2] + (1.0 - fact) * color[6][2];
+	return;
+    }
+    if ((height < 0.4) && (height >= 0.3)) {
+	fact = (height - 0.3) * 10.0;
+	c[0] = fact * color[6][0] + (1.0 - fact) * color[7][0];
+	c[1] = fact * color[6][1] + (1.0 - fact) * color[7][1];
+	c[2] = fact * color[6][2] + (1.0 - fact) * color[7][2];
+	return;
+    }
+    if ((height < 0.3) && (height >= 0.2)) {
+	fact = (height - 0.2) * 10.0;
+	c[0] = fact * color[7][0] + (1.0 - fact) * color[8][0];
+	c[1] = fact * color[7][1] + (1.0 - fact) * color[8][1];
+	c[2] = fact * color[7][2] + (1.0 - fact) * color[8][2];
+	return;
+    }
+    if ((height < 0.2) && (height >= 0.1)) {
+	fact = (height - 0.1) * 10.0;
+	c[0] = fact * color[8][0] + (1.0 - fact) * color[9][0];
+	c[1] = fact * color[8][1] + (1.0 - fact) * color[9][1];
+	c[2] = fact * color[8][2] + (1.0 - fact) * color[9][2];
+	return;
+    }
+    if ((height < 1.0) && (height >= 0.0))
+	c[0] = color[9][0]; c[1] = color[9][1]; c[2] = color[9][2];
+}
+
+
+void GLObject::initSurface()
+{
+    if (m_isloaded)
+	return;
+
+    m_isloaded = true;
+    int x, y, k = 0;
+    float h = 0, r;
+    char ch;
+
+    FILE* fp;
+    fp = fopen(mModelDir("map2.raw"), "rb");
+    if (!fp)
+	return;
+    char buf[100][100];
+    fread(buf, 100 * 100, 1, fp);
+
+    for (x = 0; x < AREA_SIZE; x++)
+    {
+	for (y = 0; y < AREA_SIZE; y++)
+	{
+	    // r=rand();
+	    //h =r/10000; //sin(x/24.0) + 7.0 * cos((y-50.0)/18.0);
+	    calccolor(buf[x][y], terraincolor[x][y]);
+
+	    height_field[x][y] = (float)buf[x][y] / 10;
+	    k++;
+	}
+
+    }
+    fclose(fp);
+}
+
+void GLObject::drawSurface()
+{
+    initSurface();
+
+    int x, z, i, j, k = 0;
+    float y = 0;
+    //glColor3f(0, 1.0, 0.0);         
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (choice == 1)
+    {
+	for (x = -AREA_SIZE / 2, i = 0; x < AREA_SIZE / 2; i++, x += step)
+	{
+	    glBegin(GL_TRIANGLE_STRIP);
+	    for (z = -AREA_SIZE / 2, j = 0; z <= AREA_SIZE / 2; j++, z += step)
+	    {
+
+		glColor3f(0, 0.0, 0.0);
+
+		glColor3fv(terraincolor[i + step][j]);
+		glVertex3f(F * (x + step), F * height_field[i + step][j], F * z);
+
+
+		glColor3fv(terraincolor[i][j]);
+		glVertex3f(F * x, F * height_field[i][j], F * z);
+		k++;
+	    }
+	    glEnd();
+	}
+
+    }
+
+
+    if (choice == 2)
+    {
+	glBegin(GL_QUADS);
+	for (x = -AREA_SIZE / 2, i = 0; x < AREA_SIZE / 2; x++, i++)
+	{
+	    for (z = -AREA_SIZE / 2, j = 0; z < AREA_SIZE / 2; z++, j++)
+	    {
+		y = rand();
+		y = y / 10000;
+		glColor3f(0, height_field[i + 1][j] * 0.2, 0.0);
+		glVertex3f(F * (x + 1), F * height_field[i + 1][j], F * z);
+		glColor3f(0, height_field[i][j] * 0.2, 0.0);
+		glVertex3f(F * x, F * height_field[i][j], F * z);
+		glColor3f(0, height_field[i][j + 1] * 0.2, 0.0);
+		glVertex3f(F * x, F * height_field[i][j + 1], F * (z + 1));
+		glColor3f(0, height_field[i + 1][j + 1] * 0.2, 0.0);
+		glVertex3f(F * (x + 1), F * height_field[i + 1][j + 1], F * (z + 1));
+	    }
+	}
+	glEnd();
+    }
 }
 
 

@@ -34,6 +34,8 @@
 #define mExport  __declspec( dllimport )
 #endif
 
+#define AREA_SIZE    100            /* size of (square) map */
+#define F            0.25           /* world scale of one height map cell */
 
 class mExport GLObject
 {
@@ -67,14 +69,15 @@ public:
  	void		    drawLayers(float x,float y, float z,float u=0,float v=0, float w=0,bool filled=true);
 	void		    drawModel();
 	void		    drawModelVA();
+	void		    drawSurface();
 
 protected:
 
        void		    drawSimpleBox(float x,float y,float z);
-	   void		    drawSimpleEarth(float rad, float u = 0, float v = 0, float w = 0);
-	   void			drawShaderEarth(float rad, float u, float v, float w);
+       void		    drawSimpleEarth(float rad, float u = 0, float v = 0, float w = 0);
+       void		    drawShaderEarth(float rad, float u, float v, float w);
        void		    drawSimpleSphere(float rad,float posx,float posy,float posz);
-	   void			drawAtmosphere(float rad, float posx, float posy, float posz);
+       void		    drawAtmosphere(float rad, float posx, float posy, float posz);
        void		    drawSimpleTeapot(float rad, bool filled=true); 
        void		    loadTexture(const char* fnm);
        void		    loadTextures(const char* fnm, unsigned int textnr);
@@ -84,6 +87,8 @@ protected:
        void		    computeNormal(float v[3][3], float out[3]);
        void		    computeVertexNormals();
        const char*	    readShaderFile(const char* fnm);
+       void		    initSurface();
+       void		    calccolor(float height, float c[3]);
 
        float		    model_vertices[2154][3];
        float		    model_normals[2154][3];
@@ -93,6 +98,13 @@ protected:
        int		    m_nrtextures;
        bool		    m_isloaded;
        bool		    m_is_glew_ok;
+
+       float		    height_field[AREA_SIZE][AREA_SIZE];
+       int		    step = 1;
+       int		    choice = 1, tMode = 1;
+       int		    xi = 0, yi = 0;
+       float		    terraincolor[100][100][3];
+
 };
 
 
