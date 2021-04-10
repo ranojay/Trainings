@@ -46,21 +46,22 @@ public:
 	void		    drawPoints(float x1,float y1,float z1,float x2,float y2,float z2);
 	void		    drawLines(float x1,float y1,float z1,float x2,float y2,float z2);
 	void		    drawFirstBox(float x,float y, float z,float u=0,float v=0,float w=0,bool filled=true);
+	void		    drawBoxIndexed(float x, float y, float z);
+	void		    drawBoxVA(float x, float y, float z);
+	void		    drawVBOBox(float x, float y, float z);
 	void		    drawColoTriangle();
 	void		    drawMaterialTriangle();
 	void		    drawTransparentTriangles();
 	void		    drawTexturedQuad(float x,float y);
 	void		    drawTextureEnvironmentQuad(float x,float y);
 	void		    drawMultiTexturedQuad(float x,float y);
-	void		    drawBox(float x,float y,float z);
 	void		    drawTexturedBox(float x,float y,float z);
 	void		    drawTransformedBoxes();
 	void		    drawTeapot(float rad, bool filled=true); 
 	void		    drawTeapotVS(float rad);
 	void		    drawTeapotFS(float rad);
 	void		    drawTeapotFS4IntelCards(float rad);
-	void		    drawBoxVA(float x,float y,float z);
-	void		    drawVBOBox( float x, float y, float z );
+	
 	void		    drawShaderBox( float x, float y, float z );
 	void		    drawSphere(float rad,float posx=0,float posy=0,float posz=0);
 	void		    drawMaterialSphere(float rad,float posx=0,float posy=0,float posz=0);
@@ -69,7 +70,7 @@ public:
  	void		    drawLayers(float x,float y, float z,float u=0,float v=0, float w=0,bool filled=true);
 	void		    drawModel();
 	void		    drawModelVA();
-	void		    drawSurface();
+	void		    drawSurface(bool fill=true);
 
 protected:
 

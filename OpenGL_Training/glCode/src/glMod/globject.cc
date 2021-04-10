@@ -398,16 +398,6 @@ void GLObject::drawSimpleBox( float x, float y, float z )
 	{ 1.0, 0.0,  0.0 }, {  0.0, 1.0, 0.0 }, { 0.0, -1.0, 0.0 }
     };
 
-    
- //   GLfloat normals[24][3] = 
- //   {   /* Normals for the 6 faces of a cube. */
-	//{ 0.0, 0.0, -1.0 }, { 0.0, 0.0, -1.0 }, { 0.0, 0.0, -1.0 }, { 0.0, 0.0, -1.0 }, 
-	//{ -1.0, 0.0, 0.0 }, { -1.0, 0.0, 0.0 }, { -1.0, 0.0, 0.0 }, { -1.0, 0.0, 0.0 }, 
-	//{ 0.0,  0.0, 1.0 }, { 0.0,  0.0, 1.0 }, { 0.0,  0.0, 1.0 }, { 0.0,  0.0, 1.0 },
-	//{ 1.0, 0.0,  0.0 }, { 1.0, 0.0,  0.0 }, { 1.0, 0.0,  0.0 }, { 1.0, 0.0,  0.0 }, 
-	//{ 0.0, 1.0, 0.0 }, {  0.0, 1.0, 0.0 }, {  0.0, 1.0, 0.0 }, {  0.0, 1.0, 0.0 }, 
-	//{ 0.0, -1.0, 0.0 }, { 0.0, -1.0, 0.0 }, { 0.0, -1.0, 0.0 }, { 0.0, -1.0, 0.0 }
- //   };
 
     GLubyte indices[] = { 3, 2, 1, 0, 
 			  0, 1, 5, 4,
@@ -440,11 +430,21 @@ void GLObject::drawSimpleBox( float x, float y, float z )
 	}
 
 	glEnd();
-	
     }
 
     //glFlush();
 }
+
+void GLObject::drawBoxIndexed(float x, float y, float z)
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glPushMatrix();
+    drawSimpleBox(x, y, z);
+    glPopMatrix();
+
+}
+
 
 
 void GLObject::drawBoxVA( float x, float y, float z )
@@ -1811,7 +1811,7 @@ void GLObject::calccolor(float height, float c[3])
 	c[2] = fact * color[8][2] + (1.0 - fact) * color[9][2];
 	return;
     }
-    if ((height < 1.0) && (height >= 0.0))
+    if ((height < 0.1) && (height >= 0.0))
 	c[0] = color[9][0]; c[1] = color[9][1]; c[2] = color[9][2];
 }
 
@@ -1827,7 +1827,7 @@ void GLObject::initSurface()
     char ch;
 
     FILE* fp;
-    fp = fopen(mModelDir("map2.raw"), "rb");
+    fp = fopen(mModelDir("map.raw"), "rb");
     if (!fp)
 	return;
     char buf[100][100];
@@ -1849,61 +1849,61 @@ void GLObject::initSurface()
     fclose(fp);
 }
 
-void GLObject::drawSurface()
+void GLObject::drawSurface(bool fill)
 {
     initSurface();
 
     int x, z, i, j, k = 0;
     float y = 0;
-    //glColor3f(0, 1.0, 0.0);         
+    //glColor3f(0, 1.0, 0.0);  
+	//choice = 2;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    if (choice == 1)
+    float vec[3][3], normal[3];
+
+    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_COLOR_MATERIAL);
+    glPolygonMode(GL_FRONT_AND_BACK, fill ? GL_FILL : GL_LINE);
+    for (x = -AREA_SIZE / 2, i = 0; x < AREA_SIZE / 2; i++, x += step)
     {
-	for (x = -AREA_SIZE / 2, i = 0; x < AREA_SIZE / 2; i++, x += step)
+	glBegin(GL_TRIANGLE_STRIP);
+	for (z = -AREA_SIZE / 2, j = 0; z <= AREA_SIZE / 2; j++, z += step)
 	{
-	    glBegin(GL_TRIANGLE_STRIP);
-	    for (z = -AREA_SIZE / 2, j = 0; z <= AREA_SIZE / 2; j++, z += step)
-	    {
+	    float vx1 = (x + step);
+	    float vy1 = height_field[i + 1][j];
+	    float vz1 = z;
+	    float vx2 = x;
+	    float vy2 = height_field[i][j];
+	    float vz2 = z;
+	    float vx3 = (x);
+	    float vy3 = height_field[i][j + 1];
+	    float vz3 = z + step;
 
-		glColor3f(0, 0.0, 0.0);
+	    vec[0][0] = vx1;
+	    vec[0][1] = vy1;
+	    vec[0][2] = vz1;
+	    vec[1][0] = vx2;
+	    vec[1][1] = vy2;
+	    vec[1][2] = vz2;
+	    vec[2][0] = vx3;
+	    vec[2][1] = vy3;
+	    vec[2][2] = vz3;
 
-		glColor3fv(terraincolor[i + step][j]);
-		glVertex3f(F * (x + step), F * height_field[i + step][j], F * z);
+	    computeNormal(vec, normal);
 
+	    glNormal3fv(normal);
+	    glColor3fv(terraincolor[i + step][j]);
+	    glVertex3f(F * vx1, F * vy1, F * vz1);
 
-		glColor3fv(terraincolor[i][j]);
-		glVertex3f(F * x, F * height_field[i][j], F * z);
-		k++;
-	    }
-	    glEnd();
-	}
-
-    }
-
-
-    if (choice == 2)
-    {
-	glBegin(GL_QUADS);
-	for (x = -AREA_SIZE / 2, i = 0; x < AREA_SIZE / 2; x++, i++)
-	{
-	    for (z = -AREA_SIZE / 2, j = 0; z < AREA_SIZE / 2; z++, j++)
-	    {
-		y = rand();
-		y = y / 10000;
-		glColor3f(0, height_field[i + 1][j] * 0.2, 0.0);
-		glVertex3f(F * (x + 1), F * height_field[i + 1][j], F * z);
-		glColor3f(0, height_field[i][j] * 0.2, 0.0);
-		glVertex3f(F * x, F * height_field[i][j], F * z);
-		glColor3f(0, height_field[i][j + 1] * 0.2, 0.0);
-		glVertex3f(F * x, F * height_field[i][j + 1], F * (z + 1));
-		glColor3f(0, height_field[i + 1][j + 1] * 0.2, 0.0);
-		glVertex3f(F * (x + 1), F * height_field[i + 1][j + 1], F * (z + 1));
-	    }
+	    glNormal3fv(normal);
+	    glColor3fv(terraincolor[i][j]);
+	    glVertex3f(F * vx2, F * vy2, F * vz2);
 	}
 	glEnd();
     }
-}
 
+    glDisable(GL_LIGHTING);
+}
 
 void GLObject::normalize( float vector[3] )
 {
