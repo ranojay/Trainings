@@ -1841,7 +1841,7 @@ void GLObject::initSurface()
 	    //h =r/10000; //sin(x/24.0) + 7.0 * cos((y-50.0)/18.0);
 	    calccolor(buf[x][y], terraincolor[x][y]);
 
-	    height_field[x][y] = (float)buf[x][y] / 10;
+	    height_field[x][y] = (float)buf[x][y] / 20;
 	    k++;
 	}
 
