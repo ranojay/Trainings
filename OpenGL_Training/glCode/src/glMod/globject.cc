@@ -1139,7 +1139,7 @@ void GLObject::drawLayers( float x,float z, float y,float u,float v, float w, bo
 	k=0;
 	for ( j=0; j<=2*z+1; j++ )
 	{
-	    p[i][j] = sin((2*3.14/60)*(i-60*i)) + 2*cos((2*3.14/50)*(j-50*j));
+	    p[i][j] = sin((2*3.14/30)*(i-30*i)) + 2*cos((2*3.14/40)*(j-40*j));
 	    k+=1;
 	    f+=0.01;
 	}	
@@ -1182,9 +1182,9 @@ void GLObject::drawLayers( float x,float z, float y,float u,float v, float w, bo
 	    computeNormal(vec,normal);	
 	     
 	    glNormal3fv(normal);
-	    glVertex3f(u+F*xf,w+p[i][j]+ y/2, v+F*zf);
+	    glVertex3f(u+FF*xf,w+p[i][j]+ y/2, v+FF*zf);
 	    glNormal3fv(normal);
-	    glVertex3f(u+F*(xf+step),w+p[i+1][j]+  y/2, v+F*zf);
+	    glVertex3f(u+FF*(xf+step),w+p[i+1][j]+  y/2, v+FF*zf);
         
 	}
 	
@@ -1207,9 +1207,9 @@ void GLObject::drawLayers( float x,float z, float y,float u,float v, float w, bo
     	
 	    glNormal3fv(normal);
 	
-	    glVertex3f(u+F*xf, w+ p[i][j]+(-y/2), v+F*zf);
+	    glVertex3f(u+FF*xf, w+ p[i][j]+(-y/2), v+FF*zf);
 
-	    glVertex3f(u+F*(xf+step), w+p[i+1][j]+(-y/2), v+F*zf);
+	    glVertex3f(u+FF*(xf+step), w+p[i+1][j]+(-y/2), v+FF*zf);
 	}
 	glEnd();
     }
@@ -1221,9 +1221,9 @@ void GLObject::drawLayers( float x,float z, float y,float u,float v, float w, bo
 	{
 	    glNormal3f(0.0f,0.0f,1.0f);	 
 		
-	    glVertex3f(u+F*xf, w+ p [j][int(2*z)]+(-y/2),v+z/2 );
+	    glVertex3f(u+FF*xf, w+ p [j][int(2*z)]+(-y/2),v+z/2 );
 
-	    glVertex3f(u+F*xf, w+p[j][int(2*z)]+y/2,v+z/2);
+	    glVertex3f(u+FF*xf, w+p[j][int(2*z)]+y/2,v+z/2);
 			
 	}
 
@@ -1235,9 +1235,9 @@ void GLObject::drawLayers( float x,float z, float y,float u,float v, float w, bo
 	{
 	    glNormal3f(0.0f,0.0f,-1.0f);	 
 
-	    glVertex3f(u+F*xf, w+p[j][0]+(-y/2),-z/2+v );
+	    glVertex3f(u+FF*xf, w+p[j][0]+(-y/2),-z/2+v );
 
-	    glVertex3f(u+F*xf, w+p[j][0]+y/2,-z/2+v);
+	    glVertex3f(u+FF*xf, w+p[j][0]+y/2,-z/2+v);
         
 	}
 
@@ -1249,9 +1249,9 @@ void GLObject::drawLayers( float x,float z, float y,float u,float v, float w, bo
 	{
 	    glNormal3f(-1.0f,0.0f,0.0f);	
 	
-	    glVertex3f(-x/2+u,p[0][j]+(-y/2)+w, F*zf+v );
+	    glVertex3f(-x/2+u,p[0][j]+(-y/2)+w, FF*zf+v );
 
-	    glVertex3f(-x/2+u, p[0][j]+(y/2)+w,F*zf+v);
+	    glVertex3f(-x/2+u, p[0][j]+(y/2)+w,FF*zf+v);
 			
 	}
 
@@ -1263,9 +1263,9 @@ void GLObject::drawLayers( float x,float z, float y,float u,float v, float w, bo
 	{
 	    glNormal3f(1.0f,0.0f,0.0f);	
 	
-	    glVertex3f(u+x/2,w+p[int(2*x)][j]+(-y/2), v+F*zf );
+	    glVertex3f(u+x/2,w+p[int(2*x)][j]+(-y/2), v+FF*zf );
 	
-	    glVertex3f(u+x/2, w+p[int(2*x)][j]+y/2,v+F*zf);
+	    glVertex3f(u+x/2, w+p[int(2*x)][j]+y/2,v+FF*zf);
        
 	}
 
